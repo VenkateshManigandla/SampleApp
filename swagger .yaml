@@ -1,0 +1,324 @@
+swagger: "2.0"
+info:
+  description: "API Documentation"
+  version: "1.0.0"
+  title: "PAR Titles Documentation"
+host: "localhost:3000"
+basePath: "/api"
+
+schemes:
+- "https"
+- "http"
+
+tags:
+- name: "Registration"
+  description: "To Register and Login Successfully"
+
+paths:
+
+  /Registration :
+    post:
+      tags:
+      - "Registration"
+      summary: "User Details Verification"
+      description: "Get the User Details from the Database - The information contains all the User Email and Role with their First Name and Last Name"
+      consumes:
+      - "application/json"
+     
+      produces:
+      
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Enter all the fields"
+        required: true
+        schema:
+          $ref: "#/definitions/Registration_request"
+    
+      responses:
+        200:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/Registration_response_200"
+        400:
+          description: "Bad Request"
+        401:
+          description: "UNAUTHORIZED"  
+        404:
+          description: "Not Found"
+        500:
+          description: "Internal server error" 
+          
+  /Login :
+    post:
+      tags:
+      - "Login"
+      summary: "Login successfully are not"
+      description: "Get the User Details from the Database - The information contains all the username and password"
+      consumes:
+      - "application/json"
+     
+      produces:
+      
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Enter username and password"
+        required: true
+        schema:
+          $ref: "#/definitions/login_request"
+    
+      responses:
+        200:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/login_response_200"
+        400:
+          description: "Bad Request" 
+        401:
+          description: "UNAUTHORIZED"  
+        404:
+          description: "Not Found"
+        500:
+          description: "Internal server error"  
+          
+  /update :
+    post:
+      tags:
+      - "update"
+      summary: "update  are not"
+      description: "update the registration details"
+      consumes:
+      - "application/json"
+     
+      produces:
+      
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Enter FirstName and id"
+        required: true
+        schema:
+          $ref: "#/definitions/update_request"
+    
+      responses:
+        200:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/update_response_200"
+        400:
+          description: "Bad Request" 
+        401:
+          description: "UNAUTHORIZED"  
+        404:
+          description: "Not Found"
+        500:
+          description: "Internal server error"       
+          
+  /fetch :
+    get:
+      tags:
+      - "get"
+      summary: "get the data"
+      description: "fetch the registration details"
+      consumes:
+      - "application/json"
+     
+      produces:
+      
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Enter id"
+        required: true
+        schema:
+          $ref: "#/definitions/fetch_request"
+    
+      responses:
+        200:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/fetch_response_200"
+        400:
+          description: "Bad Request" 
+        401:
+          description: "UNAUTHORIZED"  
+        404:
+          description: "Not Found"
+        500:
+          description: "Internal server error"     
+          
+  /deleted :
+    delete:
+      tags:
+      - "delete"
+      summary: "delete the data"
+      description: "delete the registration details"
+      consumes:
+      - "application/json"
+     
+      produces:
+      
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Enter id"
+        required: true
+        schema:
+          $ref: "#/definitions/deleted_request"
+    
+      responses:
+        200:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/deleted_response_200"
+        400:
+          description: "Bad Request" 
+        401:
+          description: "UNAUTHORIZED"  
+        404:
+          description: "Not Found"
+        500:
+          description: "Internal server error"            
+            
+          
+  
+definitions:
+
+  Registration_request :
+    type: "object"
+   
+    properties:
+      FirstName:
+        type: "string"
+        example: "venkatesh"
+      LastName:
+        type: "string"
+        example: "manigandla"
+      Gender:
+        type: "boolean"
+        example: "Male"
+      UserName:
+        type: "object"
+        example: "Miracle"
+      Password:
+        type: "string"
+        example: "xxxxxxxxx"
+      ConformPassword:
+        type: "string"
+        example: "xxxxxxxxx" 
+      Phoneno:
+        type: "integer"
+        example: "9874561236"       
+
+  Registration_response_200 :
+    type: "object"
+   
+    properties:
+      Status:
+        type: "integer"
+        example: "200"
+      
+      Info:
+        type: "string"
+        example: "Successfully Registered"
+       
+        
+  login_request :
+    type: "object"
+   
+    properties:
+      UserName:
+        type: "string"
+        example: "adminuser"
+      Password:
+        type: "string"
+        example: "xxxxxxxx"
+       
+    
+  login_response_200 :
+    type: "object"
+   
+    properties:
+      Status:
+        type: "integer"
+        example: "200"
+      
+      Info:
+        type: "string"
+        example: "Login Successfully"
+        
+  update_request :
+    type: "object"
+   
+    properties:
+      FirstName:
+        type: "string"
+        example: "adminuser"
+      Id:
+        type: "integer"
+        example: "1"
+       
+    
+  update_response_200 :
+    type: "object"
+   
+    properties:
+      Status:
+        type: "integer"
+        example: "200"
+      
+      Info:
+        type: "string"
+        example: "updated Successfully"    
+        
+  fetch_request :
+    type: "object"
+   
+    properties:
+     
+      Id:
+        type: "integer"
+        example: "1"
+       
+    
+  fetch_response_200 :
+    type: "object"
+   
+    properties:
+      Status:
+        type: "integer"
+        example: "200"
+      
+      Info:
+        type: "string"
+        example: "fetch data Successfully"    
+        
+  deleted_request :
+    type: "object"
+   
+    properties:
+     
+      Id:
+        type: "integer"
+        example: "1"
+       
+    
+  deleted_response_200 :
+    type: "object"
+   
+    properties:
+      Status:
+        type: "integer"
+        example: "200"
+      
+      Info:
+        type: "string"
+        example: "deleted data Successfully"        
+      
+       
