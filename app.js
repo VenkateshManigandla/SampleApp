@@ -1,3 +1,4 @@
+var port = process.env.PORT || 5000
 const express = require('express')
 const app = express()
 const mysql = require('mysql')
@@ -182,4 +183,4 @@ app.get('/adminhome', (req, res) => {
             res.send(error)
     })
 })
-app.listen(3000, () => console.log('server is running on port no: 3000'))
+app.listen(port, () => console.log(`server is running on port no: ${port}`))
