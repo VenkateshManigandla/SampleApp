@@ -85,7 +85,7 @@ paths:
           description: "Internal server error"  
           
   /update :
-    post:
+    put:
       tags:
       - "update"
       summary: "update  are not"
@@ -184,7 +184,237 @@ paths:
         404:
           description: "Not Found"
         500:
-          description: "Internal server error"            
+          description: "Internal server error"  
+          
+  /fetch1 :
+    get:
+      tags:
+      - "get1"
+      summary: "get the data"
+      description: "fetch the user details"
+      consumes:
+      - "application/json"
+     
+      produces:
+      
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Enter ID"
+        required: true
+        schema:
+          $ref: "#/definitions/fetch1_request"
+    
+      responses:
+        200:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/fetch1_response_200"
+        400:
+          description: "Bad Request" 
+        401:
+          description: "UNAUTHORIZED"  
+        404:
+          description: "Not Found"
+        500:
+          description: "Internal server error"    
+          
+  /createpost :
+    post:
+      tags:
+      - "post"
+      summary: "post the data"
+      description: "Post the data in the post table"
+      consumes:
+      - "application/json"
+     
+      produces:
+      
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Enter all the fields"
+        required: true
+        schema:
+          $ref: "#/definitions/createpost_request"
+    
+      responses:
+        200:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/createpost_response_200"
+        400:
+          description: "Bad Request"
+        401:
+          description: "UNAUTHORIZED"  
+        404:
+          description: "Not Found"
+        500:
+          description: "Internal server error"  
+          
+  /mypost :
+    get:
+      tags:
+      - "get2"
+      summary: "get the data"
+      description: "get the post data"
+      consumes:
+      - "application/json"
+     
+      produces:
+      
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Enter ID"
+        required: true
+        schema:
+          $ref: "#/definitions/mypost_request"
+    
+      responses:
+        200:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/mypost_response_200"
+        400:
+          description: "Bad Request" 
+        401:
+          description: "UNAUTHORIZED"  
+        404:
+          description: "Not Found"
+        500:
+          description: "Internal server error"        
+          
+          
+  /getrequest :
+    get:
+      tags:
+      - "get3"
+      summary: "get the data"
+      description: "get the details"
+      consumes:
+      - "application/json"
+     
+      produces:
+      
+      - "application/json"
+     
+    
+      responses:
+        200:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/getrequest_response_200"
+        400:
+          description: "Bad Request" 
+        401:
+          description: "UNAUTHORIZED"  
+        404:
+          description: "Not Found"
+        500:
+          description: "Internal server error"   
+          
+          
+  /updateapporvestatus :
+    put:
+      tags:
+      - "update1"
+      summary: "update  are not"
+      description: "update the approve details"
+      consumes:
+      - "application/json"
+     
+      produces:
+      
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Enter pid"
+        required: true
+        schema:
+          $ref: "#/definitions/updateapprovestatus_request"
+    
+      responses:
+        200:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/updateapprovestatus_response_200"
+        400:
+          description: "Bad Request" 
+        401:
+          description: "UNAUTHORIZED"  
+        404:
+          description: "Not Found"
+        500:
+          description: "Internal server error"        
+          
+  
+  /updaterejectstatus :
+    put:
+      tags:
+      - "update2"
+      summary: "update  are not"
+      description: "update the reject details"
+      consumes:
+      - "application/json"
+     
+      produces:
+      
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Enter pid"
+        required: true
+        schema:
+          $ref: "#/definitions/updaterejectstatus_request"
+    
+      responses:
+        200:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/updaterejectstatus_response_200"
+        400:
+          description: "Bad Request" 
+        401:
+          description: "UNAUTHORIZED"  
+        404:
+          description: "Not Found"
+        500:
+          description: "Internal server error"   
+          
+          
+  /getadminhome :
+    get:
+      tags:
+      - "get4"
+      summary: "get the data"
+      description: "get the details"
+      consumes:
+      - "application/json"
+     
+      produces:
+      
+      - "application/json"
+     
+    
+      responses:
+        200:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/getadminhome_response_200"
+        400:
+          description: "Bad Request" 
+        401:
+          description: "UNAUTHORIZED"  
+        404:
+          description: "Not Found"
+        500:
+          description: "Internal server error"         
             
           
   
@@ -253,6 +483,25 @@ definitions:
         type: "string"
         example: "Login Successfully"
         
+      FirstName:
+        type: "string"
+        example: "venkatesh"
+      LastName:
+        type: "string"
+        example: "manigandla"
+      Gender:
+        type: "boolean"
+        example: "Male"
+      UserName:
+        type: "object"
+        example: "Miracle"
+      phoneno: 
+        type: "string"
+        example: 987967899
+        
+        
+    
+        
   update_request :
     type: "object"
    
@@ -319,6 +568,158 @@ definitions:
       
       Info:
         type: "string"
-        example: "deleted data Successfully"        
+        example: "deleted data Successfully"   
+        
+  fetch1_request :
+    type: "object"
+   
+    properties:
+     
+      Id:
+        type: "integer"
+        example: "1"
+       
+    
+  fetch1_response_200 :
+    type: "object"
+   
+    properties:
+      Status:
+        type: "integer"
+        example: "200"
       
+      Info:
+        type: "string"
+        example: "fetch data Successfully"    
+        
+        
+  createpost_request :
+    type: "object"
+   
+    properties:
+      userName:
+        type: "string"
+        example: "venkatesh"
+      role:
+        type: "string"
+        example: "backend developer"
+      post:
+        type: "string"
+        example: "Nice to work with organization"
+      postedOn:
+        type: "string"
+        example: "13-08-20"
+      ID:
+        type: "integer"
+        example: "5"
+          
+
+  createpost_response_200 :
+    type: "object"
+   
+    properties:
+      Status:
+        type: "integer"
+        example: "200"
+      
+      Info:
+        type: "string"
+        example: "posted data successfully"  
+        
+        
+  mypost_request :
+    type: "object"
+   
+    properties:
+     
+      Id:
+        type: "integer"
+        example: "5"
+       
+    
+  mypost_response_200 :
+    type: "object"
+   
+    properties:
+      Status:
+        type: "integer"
+        example: "200"
+      
+      Info:
+        type: "string"
+        example: "get post data"        
+        
+  
+ 
+       
+    
+  getrequest_response_200 :
+    type: "object"
+   
+    properties:
+      Status:
+        type: "integer"
+        example: "200"
+      
+      Info:
+        type: "string"
+        example: "get post data"  
+   
+  updateapprovestatus_request :
+    type: "object"
+   
+    properties:
+     
+      Id:
+        type: "integer"
+        example: "1"
+       
+    
+  updateapprovestatus_response_200 :
+    type: "object"
+   
+    properties:
+      Status:
+        type: "integer"
+        example: "201"
+      
+      Info:
+        type: "string"
+        example: "updated Successfully" 
+        
+  updaterejectstatus_request :
+    type: "object"
+   
+    properties:
+     
+      Id:
+        type: "integer"
+        example: "1"
+       
+    
+  updaterejectstatus_response_200 :
+    type: "object"
+   
+    properties:
+      Status:
+        type: "integer"
+        example: "201"
+      
+      Info:
+        type: "string"
+        example: "updated Successfully"       
+
+
+  getadminhome_response_200 :
+    type: "object"
+   
+    properties:
+      Status:
+        type: "integer"
+        example: "200"
+      
+      Info:
+        type: "string"
+        example: "get admin data"  
+       
        
