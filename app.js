@@ -95,11 +95,11 @@ app.post('/login', function (req, res) {
 
 
 app.put('/update', (req, res) => {
-    if (!req.body.hasOwnProperty('FirstName') && !req.body.hasOwnProperty('LastName') && !req.body.hasOwnProperty('Gender') && !req.body.hasOwnProperty('Password') && !req.body.hasOwnProperty(ConfirmPassword) && !req.body.hasOwnProperty('role')) {
+    if (!req.body.hasOwnProperty('FirstName') && !req.body.hasOwnProperty('LastName') && !req.body.hasOwnProperty('Gender')  && !req.body.hasOwnProperty('role')) {
         res.status(400).send({ "Status": 400, "Info": "Bad request" })
     } else {
-        connection.query('update registrationdata set FirstName=?,LastName=?,Gender=?,Password=?,ConfirmPassword=?,phoneno=?,role=? where ID=?',
-            [req.body.FirstName, req.body.LastName, req.body.Gender, req.body.Password, req.body.ConfirmPassword, req.body.phoneno, req.body.role, req.body.ID], (err, data) => {
+        connection.query('update registrationdata set FirstName=?,LastName=?,Gender=?,phoneno=?,role=? where ID=?',
+            [req.body.FirstName, req.body.LastName, req.body.Gender, req.body.phoneno, req.body.role, req.body.ID], (err, data) => {
                 if (err) {
                     res.status(500).send({ "Status": 500, "Info": "Internal server error " })
                 }
