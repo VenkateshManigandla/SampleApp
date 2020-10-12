@@ -10,6 +10,7 @@ app.use(cors())
 const nodemailer = require('nodemailer')
 const creds = require("./config")
 require('dotenv').config()
+var moment = require('moment')
 
 var swaggerUi = require('swagger-ui-express'),
     YAML = require('yamljs'),
@@ -315,13 +316,13 @@ app.put('/update', (req, res) => {
 
 
 app.post('/createpost', (req, res) => {
-    if (!req.body.hasOwnProperty('FirstName') && !req.body.hasOwnProperty('LastName') && !req.body.hasOwnProperty('role') && !req.body.hasOwnProperty('post') && !req.body.hasOwnProperty('post') && !req.body.hasOwnProperty('postedOn')
+    if (!req.body.hasOwnProperty('FirstName') && !req.body.hasOwnProperty('LastName') && !req.body.hasOwnProperty('role') && !req.body.hasOwnProperty('post') && !req.body.hasOwnProperty('post')
         && !req.body.hasOwnProperty('status') && !req.body.hasOwnProperty('title') && !req.body.hasOwnProperty('ID')) {
         res.status(400).send({ "Status": 400, "Info": "Bad request" })
     }
     else {
         connection.query('INSERT into userpost(FirstName,LastName,role,post,postedOn,status,title,ID) values(?,?,?,?,?,?,?,?)',
-            [req.body.FirstName, req.body.LastName, req.body.role, req.body.post, req.body.postedOn, req.body.status, req.body.title, req.body.ID], (err, data) => {
+            [req.body.FirstName, req.body.LastName, req.body.role, req.body.post, new Date(), req.body.status, req.body.title, req.body.ID], (err, data) => {
                 if (err) {
                     res.status(500).send({ "Status": 500, "Info": "Internal server error " })
                 }
@@ -337,7 +338,7 @@ app.get('/home', (req, res) => {
     if (!req.body.hasOwnProperty('ID')) {
         res.status(400).send({ "Status": 400, "Info": "Bad request" })
     }
-    connection.query((`SELECt * from userpost where status=1 AND ID=${req.body.ID}`), (err, result) => {
+    connection.query((`SELECt * from userpost where status=1 AND ID=${req.body.ID} ORDER BY postedOn DESC`), (err, result) => {
         if (err) {
             res.status(500).send({ "Status": 500, "Info": "Internal server error :" + err })
         }
@@ -355,7 +356,7 @@ app.get('/mypost/:ID', (req, res) => {
     if (!req.params.hasOwnProperty('ID')) {
         res.status(400).send({ "Status": 400, "Info": "Bad request" })
     }
-    connection.query(`SELECT * from userpost WHERE ID=${req.params.ID}`, (err, data) => {
+    connection.query(`SELECT * from userpost WHERE ID=${req.params.ID} ORDER BY postedOn DESC`, (err, data) => {
         if (err) {
             res.status(500).send({ "Status": 500, "Info": "Internal server error :" + err })
         }
@@ -370,7 +371,7 @@ app.get('/mypost/:ID', (req, res) => {
 
 
 app.get('/request', (req, res) => {
-    connection.query(("SELECt * from userpost where status=0 "), (err, result) => {
+    connection.query(("SELECt * from userpost where status=0 ORDER BY postedOn DESC"), (err, result) => {
         if (err) {
             res.status(500).send({ "Status": 500, "Info": "Internal server error :" + err })
         }
@@ -388,18 +389,23 @@ app.put('/approve', (req, res) => {
     if (!req.body.hasOwnProperty('pid')) {
         res.status(400).send({ "Status": 400, "Info": "Bad request" })
     } else {
-        connection.query(`update userpost set status=1 where pid=${req.body.pid}`, (err, data) => {
-            if (err) {
-                res.status(500).send({ "Status": 500, "Info": "Internal server error" })
-            }
+        let d = new Date().toISOString()
+        console.log(typeof d, d)
+        connection.query(`update userpost set status=1,postedOn='${new Date()}' where pid=${req.body.pid}`, (err, data) => {
+            if (!err) {
 
-            if (data) {
-                res.status(200).send({ "Status": 200, "Info": data })
-            }
-            else {
-                res.status(404).send({ "Status": 404, "Info": "could not approve the data" })
+                if (data) {
+                    res.status(200).send({ "Status": 200, "Info": data })
+                }
+                else {
+                    res.status(404).send({ "Status": 404, "Info": "could not approve the data" })
+                }
+            } else {
+                console.log(err)
+                res.status(500).send({ "Status": 500, "Info": "Internal server error " })
             }
         })
+
     }
 })
 
@@ -424,7 +430,7 @@ app.put('/reject', (req, res) => {
 })
 
 app.get('/rejected', (req, res) => {
-    connection.query(("SELECt * from userpost where status=2 "), (err, result) => {
+    connection.query(("SELECt * from userpost where status=2 ORDER BY postedOn DESC "), (err, result) => {
         if (err) {
             res.status(500).send({ "Status": 500, "Info": "Internal server error :" + err })
         }
@@ -438,7 +444,7 @@ app.get('/rejected', (req, res) => {
 })
 
 app.get('/adminhome', (req, res) => {
-    connection.query(("SELECt * from userpost where status=1 "), (err, result) => {
+    connection.query(("SELECt * from userpost where status=1 ORDER BY postedOn DESC "), (err, result) => {
         if (err) {
             res.status(500).send({ "Status": 500, "Info": "Internal server error :" + err })
         }
