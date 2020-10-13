@@ -322,7 +322,7 @@ app.post('/createpost', (req, res) => {
         res.status(400).send({ "Status": 400, "Info": "Bad request" })
     }
     else {
-       var d = new Date().getTime()
+        var d = new Date().getTime()
         connection.query('INSERT into userpost(FirstName,LastName,role,post,postedOn,status,title,ID) values(?,?,?,?,?,?,?,?)',
             [req.body.FirstName, req.body.LastName, req.body.role, req.body.post, d, req.body.status, req.body.title, req.body.ID], (err, data) => {
                 if (err) {
@@ -341,16 +341,18 @@ app.get('/home', (req, res) => {
         res.status(400).send({ "Status": 400, "Info": "Bad request" })
     }
     connection.query((`SELECt * from userpost where status=1 AND ID=${req.body.ID} ORDER BY postedOn DESC`), (err, result) => {
-        if (err) {
-            res.status(500).send({ "Status": 500, "Info": "Internal server error :" + err })
-        }
+        if (!err) {
+        
+        
         if (result.length > 0) {
             res.status(200).send({ "Status": 200, "Info": result })
 
         }
         else
             res.status(404).send({ "Status": 404, "Info": "can not fetch the userpost data" })
-
+    } else {
+        res.status(500).send({ "Status": 500, "Info": "Internal server error :" + err })
+    }
     })
 })
 
@@ -359,14 +361,17 @@ app.get('/mypost/:ID', (req, res) => {
         res.status(400).send({ "Status": 400, "Info": "Bad request" })
     }
     connection.query(`SELECT * from userpost WHERE ID=${req.params.ID} ORDER BY postedOn DESC`, (err, data) => {
-        if (err) {
+        if (!err) {
+
+
+            if (data.length > 0) {
+                res.status(200).send({ "Status": 200, "Info": data })
+            }
+            else
+                res.status(404).send({ "Status": 200, "Info": "unable to get the data" })
+        } else {
             res.status(500).send({ "Status": 500, "Info": "Internal server error :" + err })
         }
-        if (data.length > 0) {
-            res.status(200).send({ "Status": 200, "Info": data })
-        }
-        else
-            res.status(404).send({ "Status": 200, "Info": "unable to get the data" })
     })
 })
 
@@ -374,15 +379,18 @@ app.get('/mypost/:ID', (req, res) => {
 
 app.get('/request', (req, res) => {
     connection.query(("SELECt * from userpost where status=0 ORDER BY postedOn DESC"), (err, result) => {
-        if (err) {
+        if (!err) {
+
+
+            if (result.length > 0) {
+                res.status(200).send({ "Status": 200, "Info": result })
+            }
+
+            else
+                res.status(404).send({ "Status": 404, "Info": "unable to fetch the request data" })
+        } else {
             res.status(500).send({ "Status": 500, "Info": "Internal server error :" + err })
         }
-        if (result.length > 0) {
-            res.status(200).send({ "Status": 200, "Info": result })
-        }
-
-        else
-            res.status(404).send({ "Status": 404, "Info": "unable to fetch the request data" })
     })
 })
 
@@ -391,7 +399,7 @@ app.put('/approve', (req, res) => {
     if (!req.body.hasOwnProperty('pid')) {
         res.status(400).send({ "Status": 400, "Info": "Bad request" })
     } else {
-        
+
         console.log(new Date())
         var d = new Date().getTime()
         connection.query(`update userpost set status=1,postedOn=${d} where pid=${req.body.pid}`, (err, data) => {
@@ -418,15 +426,17 @@ app.put('/reject', (req, res) => {
     } else {
         var d = new Date().getTime()
         connection.query(`update userpost set status=2,postedOn=${d} where pid=${req.body.pid}`, (err, data) => {
-            if (err) {
-                res.status(500).send({ "Status": 500, "Info": "Internal server error " })
-            }
-            if (data) {
+            if (!err) {
 
-                res.status(200).send({ "Status": 200, "Info": "post rejected" })
-            }
-            else {
-                res.status(404).send({ "Status": 404, "Info": "could not reject the data" })
+                if (data) {
+
+                    res.status(200).send({ "Status": 200, "Info": "post rejected" })
+                }
+                else {
+                    res.status(404).send({ "Status": 404, "Info": "could not reject the data" })
+                }
+            } else {
+                res.status(500).send({ "Status": 500, "Info": "Internal server error " })
             }
 
         })
@@ -435,29 +445,33 @@ app.put('/reject', (req, res) => {
 
 app.get('/rejected', (req, res) => {
     connection.query(("SELECt * from userpost where status=2 ORDER BY postedOn DESC "), (err, result) => {
-        if (err) {
+        if (!err) {
+
+            if (result.length > 0) {
+                res.status(200).send({ "Status": 200, "Info": result })
+            }
+
+            else
+                res.status(404).send({ "Status": 404, "Info": "can not get the rejected data" })
+        } else {
             res.status(500).send({ "Status": 500, "Info": "Internal server error :" + err })
         }
-        if (result.length > 0) {
-            res.status(200).send({ "Status": 200, "Info": result })
-        }
-
-        else
-            res.status(404).send({ "Status": 404, "Info": "can not get the rejected data" })
     })
 })
 
 app.get('/adminhome', (req, res) => {
     connection.query(("SELECt * from userpost where status=1 ORDER BY postedOn DESC "), (err, result) => {
-        if (err) {
+        if (!err) {
+
+            if (result.length > 0) {
+                res.status(200).send({ "Status": 200, "Info": result })
+            }
+
+            else
+                res.status(404).send({ "Status": 404, "Info": "can not get the home data" })
+        } else {
             res.status(500).send({ "Status": 500, "Info": "Internal server error :" + err })
         }
-        if (result.length > 0) {
-            res.status(200).send({ "Status": 200, "Info": result })
-        }
-
-        else
-            res.status(404).send({ "Status": 404, "Info": "can not get the home data" })
     })
 })
 
@@ -468,14 +482,16 @@ app.put('/editpost', (req, res) => {
     } else {
         connection.query(`update userpost set post=?,postedOn=?,title=? where pid=${req.body.pid}`,
             [req.body.post, req.body.postedOn, req.body.title], (err, data) => {
-                if (err) {
+                if (!err) {
+
+                    if (data) {
+                        res.status(200).send({ "Status": 200, "Info": data })
+                    }
+                    else {
+                        res.status(404).send({ "Status": 404, "Info": "could not updated the post data" })
+                    }
+                } else {
                     res.status(500).send({ "Status": 500, "Info": "Internal server error " })
-                }
-                if (data) {
-                    res.status(200).send({ "Status": 200, "Info": data })
-                }
-                else {
-                    res.status(404).send({ "Status": 404, "Info": "could not updated the post data" })
                 }
             })
     }
@@ -489,15 +505,16 @@ app.delete('/deletepost/:pid', (req, res) => {
         res.status(400).send({ "Status": 400, "Info": "Bad request" })
     } else {
         connection.query('delete from userpost where pid=?', [req.params.pid], (err, data) => {
-            if (err) {
-                res.status(500).send({ "Status": 500, "Info": "Internal server error " })
-            }
+            if (!err) {
 
-            if (data) {
-                res.status(200).send({ "Status": 200, "Info": "Post deleted Successfully" })
-            }
-            else {
-                res.status(404).send({ "Status": 404, "Info": "unable to delete post" })
+                if (data) {
+                    res.status(200).send({ "Status": 200, "Info": "Post deleted Successfully" })
+                }
+                else {
+                    res.status(404).send({ "Status": 404, "Info": "unable to delete post" })
+                }
+            } else {
+                res.status(500).send({ "Status": 500, "Info": "Internal server error " })
             }
         })
     }
@@ -527,15 +544,18 @@ app.post('/createalert', (req, res) => {
 app.get('/alerthome', (req, res) => {
 
     connection.query(("SELECt * from alert"), (err, result) => {
-        if (err) {
+        if (!err) {
+
+
+            if (result.length > 0) {
+                res.status(200).send({ "Status": 200, "Info": result })
+            }
+
+            else
+                res.status(404).send({ "Status": 404, "Info": "can't get the alert home data" })
+        } else {
             res.status(500).send({ "Status": 500, "Info": "Internal server error :" + err })
         }
-        if (result.length > 0) {
-            res.status(200).send({ "Status": 200, "Info": result })
-        }
-
-        else
-            res.status(404).send({ "Status": 404, "Info": "can't get the alert home data" })
     })
 })
 
@@ -547,14 +567,17 @@ app.put('/updatealert', (req, res) => {
     } else {
         connection.query(`update alert set name=?,link=?,createdOn=?,statusAction=? where sno=${req.body.sno}`,
             [req.body.name, req.body.link, req.body.createdOn, req.body.statusAction], (err, data) => {
-                if (err) {
+                if (!err) {
+
+
+                    if (data) {
+                        res.status(200).send({ "Status": 200, "Info": "update alert data successfully" })
+                    }
+                    else {
+                        res.status(404).send({ "Status": 404, "Info": "can't update the alert data" })
+                    }
+                } else {
                     res.status(500).send({ "Status": 500, "Info": "Internal server error " })
-                }
-                if (data) {
-                    res.status(200).send({ "Status": 200, "Info": "update alert data successfully" })
-                }
-                else {
-                    res.status(404).send({ "Status": 404, "Info": "can't update the alert data" })
                 }
             })
     }
@@ -566,16 +589,17 @@ app.delete('/deletealert/:sno', (req, res) => {
         res.status(400).send({ "Status": 400, "Info": "Bad request" })
     } else {
         connection.query('delete from alert where sno=?', [req.params.sno], (err, data) => {
-            if (err) {
+            if (!err) {
+
+                if (data) {
+                    res.status(200).send({ "Status": 200, "Info": "alert deleted successfully" })
+                }
+                else {
+                    res.status(404).send({ "Status": 404, "Info": "unable to delete alert data" })
+                }
+            } else {
                 res.status(500).send({ "Status": 500, "Info": "Internal server error " })
             }
-            if (data) {
-                res.status(200).send({ "Status": 200, "Info": "alert deleted successfully" })
-            }
-            else {
-                res.status(404).send({ "Status": 404, "Info": "unable to delete alert data" })
-            }
-
         })
     }
 })
@@ -584,13 +608,16 @@ app.delete('/deletealert/:sno', (req, res) => {
 app.get('/alertstatus', (req, res) => {
     connection.query('select * from alert where statusAction=1', (err, data) => {
         if (err) {
+
+
+            if (data.length > 0) {
+                res.status(200).send({ "Status": 200, "Info": data })
+            }
+            else
+                res.status(404).send({ "Status": 404, "Info": "can't fetch the alert status" })
+        } else {
             res.status(500).send({ "Status": 500, "Info": "Internal server error :" + err })
         }
-        if (data.length > 0) {
-            res.status(200).send({ "Status": 200, "Info": data })
-        }
-        else
-            res.status(404).send({ "Status": 404, "Info": "can't fetch the alert status" })
     })
 })
 
