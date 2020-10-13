@@ -12,6 +12,7 @@ const creds = require("./config")
 require('dotenv').config()
 var moment = require('moment')
 
+
 var swaggerUi = require('swagger-ui-express'),
     YAML = require('yamljs'),
     swaggerDocument = YAML.load(path.join(__dirname + '/swagger .yaml'));
@@ -321,8 +322,9 @@ app.post('/createpost', (req, res) => {
         res.status(400).send({ "Status": 400, "Info": "Bad request" })
     }
     else {
+       var d = new Date().getTime()
         connection.query('INSERT into userpost(FirstName,LastName,role,post,postedOn,status,title,ID) values(?,?,?,?,?,?,?,?)',
-            [req.body.FirstName, req.body.LastName, req.body.role, req.body.post, new Date(), req.body.status, req.body.title, req.body.ID], (err, data) => {
+            [req.body.FirstName, req.body.LastName, req.body.role, req.body.post, d, req.body.status, req.body.title, req.body.ID], (err, data) => {
                 if (err) {
                     res.status(500).send({ "Status": 500, "Info": "Internal server error " })
                 }
@@ -389,9 +391,10 @@ app.put('/approve', (req, res) => {
     if (!req.body.hasOwnProperty('pid')) {
         res.status(400).send({ "Status": 400, "Info": "Bad request" })
     } else {
-        let d = new Date().toISOString()
-        console.log(typeof d, d)
-        connection.query(`update userpost set status=1,postedOn='${new Date()}' where pid=${req.body.pid}`, (err, data) => {
+        
+        console.log(new Date())
+        var d = new Date().getTime()
+        connection.query(`update userpost set status=1,postedOn=${d} where pid=${req.body.pid}`, (err, data) => {
             if (!err) {
 
                 if (data) {
@@ -413,7 +416,8 @@ app.put('/reject', (req, res) => {
     if (!req.body.hasOwnProperty('pid')) {
         res.status(400).send({ "Status": 400, "Info": "Bad request" })
     } else {
-        connection.query(`update userpost set status=2 where pid=${req.body.pid}`, (err, data) => {
+        var d = new Date().getTime()
+        connection.query(`update userpost set status=2,postedOn=${d} where pid=${req.body.pid}`, (err, data) => {
             if (err) {
                 res.status(500).send({ "Status": 500, "Info": "Internal server error " })
             }
@@ -589,12 +593,6 @@ app.get('/alertstatus', (req, res) => {
             res.status(404).send({ "Status": 404, "Info": "can't fetch the alert status" })
     })
 })
-
-
-app.post("/sendmail", (req, res) => {
-
-})
-
 
 
 app.listen(port, () => console.log(`server is running on port no: ${port}`))
