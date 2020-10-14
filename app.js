@@ -322,7 +322,7 @@ app.post('/createpost', (req, res) => {
         res.status(400).send({ "Status": 400, "Info": "Bad request" })
     }
     else {
-        var d = new Date().getTime()
+        var d = new Date().toISOString().replace('Z', '000').replace('T', ' ');
         connection.query('INSERT into userpost(FirstName,LastName,role,post,postedOn,status,title,ID) values(?,?,?,?,?,?,?,?)',
             [req.body.FirstName, req.body.LastName, req.body.role, req.body.post, d, req.body.status, req.body.title, req.body.ID], (err, data) => {
                 if (err) {
@@ -400,11 +400,10 @@ app.put('/approve', (req, res) => {
         res.status(400).send({ "Status": 400, "Info": "Bad request" })
     } else {
 
-        console.log(new Date())
-        var d = new Date().getTime()
-        connection.query(`update userpost set status=1,postedOn=${d} where pid=${req.body.pid}`, (err, data) => {
+        
+        var d = new Date().toISOString().replace('Z', '000').replace('T', ' ');
+        connection.query(`update userpost set status=1,postedOn='${d}' where pid=${req.body.pid}`, (err, data) => {
             if (!err) {
-
                 if (data) {
                     res.status(200).send({ "Status": 200, "Info": data })
                 }
