@@ -77,7 +77,7 @@ app.post('/registrationdata', (req, res) => {
                 const toEmail = req.body.UserName
                 const subject = "Account Created"
                 var mail = {
-                    from: "Venkatesh",
+                    from: "admin",
                     to: toEmail,
                     subject: subject,
                     html: `
@@ -305,6 +305,30 @@ app.put('/update', (req, res) => {
                 }
 
 
+            })
+    }
+})
+
+
+app.put('/editpassword', (req, res) => {
+    if (!req.body.hasOwnProperty('Password') && !req.body.hasOwnProperty('ConfirmPassword')) {
+        res.status(400).send({ "Status": 400, "Info": "Bad request" })
+    } else {
+      
+        connection.query(`update registrationdata set Password=?,ConfirmPassword=? where ID=?`,
+            [req.body.Password, req.body.ConfirmPassword,req.body.ID], (err, data) => {
+                if (!err) {
+
+
+                    if (data) {
+                        res.status(200).send({ "Status": 200, "Info": "Password updated successfully" })
+                    }
+                    else {
+                        res.status(404).send({ "Status": 404, "Info": "can't update password" })
+                    }
+                } else {
+                    res.status(500).send({ "Status": 500, "Info": "Internal server error " })
+                }
             })
     }
 })
