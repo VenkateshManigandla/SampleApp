@@ -10,7 +10,11 @@ app.use(cors())
 const nodemailer = require('nodemailer')
 const creds = require("./config")
 require('dotenv').config()
-var moment = require('moment')
+// var moment = require('moment')
+// const fileupload = require('express-fileupload')
+// app.use(fileupload())
+// const multer = require('multer')
+// const ejs = require('ejs')
 
 
 var swaggerUi = require('swagger-ui-express'),
@@ -40,6 +44,7 @@ connection.connect((err) => {
 })
 
 
+
 app.post('/registrationdata', (req, res) => {
 
 
@@ -61,11 +66,12 @@ app.post('/registrationdata', (req, res) => {
             console.log('Server is ready to take messages');
         }
     });
+    
 
     if (!req.body.hasOwnProperty('FirstName') && !req.body.hasOwnProperty('LastName') && !req.body.hasOwnProperty('Gender') && !req.body.hasOwnProperty('UserName') && !req.body.hasOwnProperty('Password') && !req.body.hasOwnProperty('ConfirmPassword') && !req.body.hasOwnProperty('phoneno') && !req.body.hasOwnProperty('role')) {
         res.status(400).send({ "Status": 400, "Info": "Bad request" })
     } else {
-
+        
         connection.query('Insert into registrationdata (FirstName,LastName,Gender,UserName,Password,ConfirmPassword,phoneno,role) values(?,?,?,?,?,?,?,?)',
             [req.body.FirstName, req.body.LastName, req.body.Gender, req.body.UserName, req.body.Password, req.body.ConfirmPassword, req.body.phoneno, req.body.role], (err, row) => {
                 const toEmail = req.body.UserName
@@ -228,7 +234,7 @@ app.post('/registrationdata', (req, res) => {
 
                     if (err) {
 
-                        res.status(500).send({ "Status": 500, "Info": "Registration unsuccessfull " })
+                        res.status(500).send({ "Status": 500, "Info": "Internal server error :" + err })
 
                     }
                     else {
@@ -289,7 +295,7 @@ app.put('/update', (req, res) => {
                     res.status(500).send({ "Status": 500, "Info": "Internal server error " })
                 }
                 else {
-                    connection.query(`select FirstName,LastName,Gender,phoneno,role from registrationdata where ID=${req.body.ID}`, (error, result) => {
+                    connection.query(`select FirstName,LastName,Gender,phoneno,role,ID from registrationdata where ID=${req.body.ID}`, (error, result) => {
                         if (!error) {
                             res.status(200).send({ "Status": 200, result, "Info": "updated successfully" })
 
@@ -317,12 +323,13 @@ app.put('/update', (req, res) => {
 
 
 app.post('/createpost', (req, res) => {
-    if (!req.body.hasOwnProperty('FirstName') && !req.body.hasOwnProperty('LastName') && !req.body.hasOwnProperty('role') && !req.body.hasOwnProperty('post') && !req.body.hasOwnProperty('post')
+    if (!req.body.hasOwnProperty('FirstName') && !req.body.hasOwnProperty('LastName') && !req.body.hasOwnProperty('role') && !req.body.hasOwnProperty('post') 
         && !req.body.hasOwnProperty('status') && !req.body.hasOwnProperty('title') && !req.body.hasOwnProperty('ID')) {
         res.status(400).send({ "Status": 400, "Info": "Bad request" })
     }
     else {
-        var d = new Date().getTime()
+        var d = new Date().toISOString().replace('Z', '000').replace('T', ' ');
+        console.log(d)
         connection.query('INSERT into userpost(FirstName,LastName,role,post,postedOn,status,title,ID) values(?,?,?,?,?,?,?,?)',
             [req.body.FirstName, req.body.LastName, req.body.role, req.body.post, d, req.body.status, req.body.title, req.body.ID], (err, data) => {
                 if (err) {
@@ -400,9 +407,8 @@ app.put('/approve', (req, res) => {
         res.status(400).send({ "Status": 400, "Info": "Bad request" })
     } else {
 
-        console.log(new Date())
-        var d = new Date().getTime()
-        connection.query(`update userpost set status=1,postedOn=${d} where pid=${req.body.pid}`, (err, data) => {
+        var d = new Date().toISOString().replace('Z', '000').replace('T', ' ');
+        connection.query(`update userpost set status=1,postedOn='${d}' where pid=${req.body.pid}`, (err, data) => {
             if (!err) {
 
                 if (data) {
@@ -424,8 +430,8 @@ app.put('/reject', (req, res) => {
     if (!req.body.hasOwnProperty('pid')) {
         res.status(400).send({ "Status": 400, "Info": "Bad request" })
     } else {
-        var d = new Date().getTime()
-        connection.query(`update userpost set status=2,postedOn=${d} where pid=${req.body.pid}`, (err, data) => {
+        var d = new Date().toISOString().replace('Z', '000').replace('T', ' ');
+        connection.query(`update userpost set status=2,postedOn='${d}' where pid=${req.body.pid}`, (err, data) => {
             if (!err) {
 
                 if (data) {
@@ -480,8 +486,9 @@ app.put('/editpost', (req, res) => {
     if (!req.body.hasOwnProperty('pid')) {
         res.status(400).send({ "Status": 400, "Info": "Bad request" })
     } else {
+        var d = new Date().toISOString().replace('Z', '000').replace('T', ' ');
         connection.query(`update userpost set post=?,postedOn=?,title=? where pid=${req.body.pid}`,
-            [req.body.post, req.body.postedOn, req.body.title], (err, data) => {
+            [req.body.post, d,req.body.title], (err, data) => {
                 if (!err) {
 
                     if (data) {
@@ -524,12 +531,13 @@ app.delete('/deletepost/:pid', (req, res) => {
 //alert table
 
 app.post('/createalert', (req, res) => {
-    if (!req.body.hasOwnProperty('sno') && !req.body.hasOwnProperty('name') && !req.body.hasOwnProperty('link') && !req.body.hasOwnProperty('createdOn') && !req.body.hasOwnProperty('statusAction')) {
+    if (!req.body.hasOwnProperty('sno') && !req.body.hasOwnProperty('name') && !req.body.hasOwnProperty('link') && !req.body.hasOwnProperty('statusAction')) {
         res.status(400).send({ "Status": 400, "Info": "Bad request" })
     }
     else {
+        var d = new Date().toISOString().replace('Z', '000').replace('T', ' ');
         connection.query('INSERT into alert(sno,name,link,createdOn,statusAction) values(?,?,?,?,?)',
-            [req.body.sno, req.body.name, req.body.link, req.body.createdOn, req.body.statusAction], (err, data) => {
+            [req.body.sno, req.body.name, req.body.link, d, req.body.statusAction], (err, data) => {
                 if (err) {
                     res.status(500).send({ "Status": 500, "Info": "Internal server error " })
                 }
@@ -543,7 +551,7 @@ app.post('/createalert', (req, res) => {
 
 app.get('/alerthome', (req, res) => {
 
-    connection.query(("SELECt * from alert"), (err, result) => {
+    connection.query(("SELECt * from alert ORDER BY createdOn DESC"), (err, result) => {
         if (!err) {
 
 
@@ -565,8 +573,9 @@ app.put('/updatealert', (req, res) => {
     if (!req.body.hasOwnProperty('name') && !req.body.hasOwnProperty('link') && !req.body.hasOwnProperty('createdOn') && !req.body.hasOwnProperty('statusAction')) {
         res.status(400).send({ "Status": 400, "Info": "Bad request" })
     } else {
+        var d = new Date().toISOString().replace('Z', '000').replace('T', ' ');
         connection.query(`update alert set name=?,link=?,createdOn=?,statusAction=? where sno=${req.body.sno}`,
-            [req.body.name, req.body.link, req.body.createdOn, req.body.statusAction], (err, data) => {
+            [req.body.name, req.body.link, d, req.body.statusAction], (err, data) => {
                 if (!err) {
 
 
@@ -606,8 +615,8 @@ app.delete('/deletealert/:sno', (req, res) => {
 
 
 app.get('/alertstatus', (req, res) => {
-    connection.query('select * from alert where statusAction=1', (err, data) => {
-        if (err) {
+    connection.query('select * from alert where statusAction=1 ORDER BY createdOn DESC', (err, data) => {
+        if (!err) {
 
 
             if (data.length > 0) {
@@ -620,6 +629,8 @@ app.get('/alertstatus', (req, res) => {
         }
     })
 })
+
+
 
 
 app.listen(port, () => console.log(`server is running on port no: ${port}`))
