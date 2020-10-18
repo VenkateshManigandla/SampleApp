@@ -9,9 +9,42 @@ const cors = require('cors')
 app.use(cors())
 const nodemailer = require('nodemailer')
 const creds = require("./config")
+const fileUpload = require("express-fileupload")
 require('dotenv').config()
 var moment = require('moment')
 
+
+const multer = require("multer") 
+/* 
+ app.use(express.static(path.join(__dirname , 'uploads')))
+app.use(fileUpload())  */
+ 
+
+ const storage = multer.diskStorage({
+    destination: function(req,file,cb){
+        cb(null,path.join(__dirname, './uploads/'))
+    },
+    filename:function(req,file,cb){
+        cb(null,  file.fieldname + "-" + Date.now() + path.extname(file.originalname) )
+    },
+}) 
+
+
+/* 
+const upload = multer({
+    dest:"images",
+
+    fileFilter(req,file,callback){
+        if(!file.originalname.match(/\.(jpg|jpeg|png)$/)){
+            return callback(new Error("Please upload a Image"))
+        }
+        callback(undefined,true)
+    }
+}) 
+ */
+
+
+ const upload = multer({storage:storage})
 
 var swaggerUi = require('swagger-ui-express'),
     YAML = require('yamljs'),
@@ -23,8 +56,6 @@ var options = {
 };
 app.use('/apiSpec', swaggerUi.serve);
 app.get('/apiSpec', swaggerUi.setup(swaggerDocument, options));
-
-
 
 var connection = mysql.createConnection({
     host: 'localhost',
@@ -40,8 +71,16 @@ connection.connect((err) => {
 })
 
 
-app.post('/registrationdata', (req, res) => {
+/* app.post("/upload",upload.single("photo"),(req,res)=>{
 
+    console.log(req.file.filename)
+    console.log(req.body.name)
+    res.send(req.file.filename)
+}
+) */
+
+
+app.post('/registrationdata',upload.single("photo"), (req, res) => {
 
     var transport = {
         host: 'smtp.gmail.com',
@@ -62,11 +101,11 @@ app.post('/registrationdata', (req, res) => {
         }
     });
 
+
     if (!req.body.hasOwnProperty('FirstName') && !req.body.hasOwnProperty('LastName') && !req.body.hasOwnProperty('Gender') && !req.body.hasOwnProperty('UserName') && !req.body.hasOwnProperty('Password') && !req.body.hasOwnProperty('ConfirmPassword') && !req.body.hasOwnProperty('phoneno') && !req.body.hasOwnProperty('role')) {
         res.status(400).send({ "Status": 400, "Info": "Bad request" })
     } else {
-
-        connection.query('Insert into registrationdata (FirstName,LastName,Gender,UserName,Password,ConfirmPassword,phoneno,role) values(?,?,?,?,?,?,?,?)',
+      connection.query('Insert into registrationdata (FirstName,LastName,Gender,UserName,Password,ConfirmPassword,phoneno,role) values(?,?,?,?,?,?,?,?)',
             [req.body.FirstName, req.body.LastName, req.body.Gender, req.body.UserName, req.body.Password, req.body.ConfirmPassword, req.body.phoneno, req.body.role], (err, row) => {
                 const toEmail = req.body.UserName
                 const subject = "Account Created"
@@ -239,7 +278,8 @@ app.post('/registrationdata', (req, res) => {
                 })
 
             })
-    }
+        }
+
 })
 
 
@@ -619,6 +659,8 @@ app.get('/alertstatus', (req, res) => {
         }
     })
 })
+
+
 
 
 app.listen(port, () => console.log(`server is running on port no: ${port}`))
