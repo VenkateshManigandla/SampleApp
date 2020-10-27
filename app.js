@@ -10,12 +10,8 @@ app.use(cors())
 const nodemailer = require('nodemailer')
 const creds = require("./config")
 require('dotenv').config()
-// var moment = require('moment')
-// const fileupload = require('express-fileupload')
-// app.use(fileupload())
-// const multer = require('multer')
-// const ejs = require('ejs')
-
+const moment = require('moment')
+const { title } = require('process')
 
 var swaggerUi = require('swagger-ui-express'),
     YAML = require('yamljs'),
@@ -46,6 +42,7 @@ connection.connect((err) => {
 
 
 app.post('/registrationdata', (req, res) => {
+    //console.log(req.file)
 
 
     var transport = {
@@ -68,9 +65,9 @@ app.post('/registrationdata', (req, res) => {
     });
     
 
-    if (!req.body.hasOwnProperty('FirstName') && !req.body.hasOwnProperty('LastName') && !req.body.hasOwnProperty('Gender') && !req.body.hasOwnProperty('UserName') && !req.body.hasOwnProperty('Password') && !req.body.hasOwnProperty('ConfirmPassword') && !req.body.hasOwnProperty('phoneno') && !req.body.hasOwnProperty('role')) {
+    if (!req.body.hasOwnProperty('FirstName') && !req.body.hasOwnProperty('LastName') && !req.body.hasOwnProperty('Gender') && !req.body.hasOwnProperty('UserName') && !req.body.hasOwnProperty('Password') && !req.body.hasOwnProperty('ConfirmPassword') && !req.body.hasOwnProperty('phoneno') && !req.body.hasOwnProperty('role') ) {
         res.status(400).send({ "Status": 400, "Info": "Bad request" })
-    } else {
+    } else {   
         
         connection.query('Insert into registrationdata (FirstName,LastName,Gender,UserName,Password,ConfirmPassword,phoneno,role) values(?,?,?,?,?,?,?,?)',
             [req.body.FirstName, req.body.LastName, req.body.Gender, req.body.UserName, req.body.Password, req.body.ConfirmPassword, req.body.phoneno, req.body.role], (err, row) => {
@@ -245,7 +242,8 @@ app.post('/registrationdata', (req, res) => {
                 })
 
             })
-    }
+        }
+    
 })
 
 
@@ -270,7 +268,7 @@ app.post('/login', function (req, res) {
                 }
                 if (userData) {
 
-                    res.status(200).send({ "Status": 200, "FirstName": userData.FirstName, "LastName": userData.LastName, "Gender": userData.Gender, "phoneno": userData.phoneno, "role": userData.role, "ID": userData.ID })
+                    res.status(200).send({ "Status": 200,  "FirstName": userData.FirstName, "LastName": userData.LastName, "Gender": userData.Gender, "phoneno": userData.phoneno, "role": userData.role, "ID": userData.ID })
 
                 } else {
                     res.status(401).send({ "Status": 401, "Info": "Invalid crediantals" })
@@ -399,7 +397,7 @@ app.get('/mypost/:ID', (req, res) => {
                 res.status(200).send({ "Status": 200, "Info": data })
             }
             else
-                res.status(404).send({ "Status": 200, "Info": "unable to get the data" })
+                res.status(404).send({ "Status": 404, "Info": "unable to get the data" })
         } else {
             res.status(500).send({ "Status": 500, "Info": "Internal server error :" + err })
         }
@@ -655,6 +653,84 @@ app.get('/alertstatus', (req, res) => {
 })
 
 
+app.put('/updatestatus', (req, res) => {
+    if (!req.body.hasOwnProperty('sno') && !req.body.hasOwnProperty('statusAction')) {
+        res.status(400).send({ "Status": 400, "Info": "Bad request" })
+    } else {
+      
+        connection.query(`update alert set statusAction=? where sno=?`,
+            [req.body.statusAction,req.body.sno], (err, data) => {
+                if (!err) {
 
 
+                    if (data) {
+                        res.status(200).send({ "Status": 200, "Info": "status updated successfully" })
+                    }
+                    else {
+                        res.status(404).send({ "Status": 404, "Info": "can't update status" })
+                    }
+                } else {
+                    res.status(500).send({ "Status": 500, "Info": "Internal server error " })
+                }
+            })
+    }
+})
+
+app.post('/searchrequest', (req, res) => {
+    if ( !req.body.hasOwnProperty('FirstName') && !req.body.hasOwnProperty('title')) {
+        res.status(400).send({ "Status": 400, "Info": "Bad request" })
+    }
+    connection.query(`SELECT * from userpost WHERE status=0 AND FirstName='${req.body.FirstName}' OR title='${req.body.title}' ORDER BY postedOn DESC`, (err, data) => {
+        if (!err) {
+
+
+            if (data.length > 0) {
+                res.status(200).send({ "Status": 200, "Info": data })
+            }
+            else
+                res.status(404).send({ "Status": 404, "Info": "unable to get the data" })
+        } else {
+            res.status(500).send({ "Status": 500, "Info": "Internal server error :" + err })
+        }
+    })
+})
+app.post('/searchapprove', (req, res) => {
+    if (!req.body.hasOwnProperty('FirstName') &&!req.body.hasOwnProperty('title')) {
+        res.status(400).send({ "Status": 400, "Info": "Bad request" })
+    }
+    connection.query(`SELECT * from userpost WHERE status=1 AND FirstName='${req.body.FirstName}' OR title='${req.body.title}' ORDER BY postedOn DESC`, (err, data) => {
+        if (!err) {
+
+
+            if (data.length > 0) {
+                res.status(200).send({ "Status": 200, "Info": data })
+            }
+            else
+                res.status(404).send({ "Status": 404, "Info": "unable to get the data" })
+        } else {
+            res.status(500).send({ "Status": 500, "Info": "Internal server error :" + err })
+        }
+    })
+})
+
+app.post('/searchreject', (req, res) => {
+    if ( !req.body.hasOwnProperty('FirstName') && !req.body.hasOwnProperty('title')) {
+        res.status(400).send({ "Status": 400, "Info": "Bad request" })
+    }
+    connection.query(`SELECT * from userpost WHERE status=2 AND  FirstName='${req.body.FirstName}' OR title='${req.body.title}' `, (err, data) => {
+        if (!err) {
+
+
+            if (data.length > 0) {
+                res.status(200).send({ "Status": 200, "Info": data })
+            }
+            else
+                res.status(404).send({ "Status": 404, "Info": "unable to get the data" })
+        } else {
+            res.status(500).send({ "Status": 500, "Info": "Internal server error :" + err })
+        }
+    })
+})
 app.listen(port, () => console.log(`server is running on port no: ${port}`))
+
+

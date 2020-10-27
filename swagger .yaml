@@ -220,6 +220,40 @@ paths:
         500:
           description: "Internal server error"    
           
+  /update1 :
+    put:
+      tags:
+      - "update"
+      summary: "update  are not"
+      description: "update the registration password details"
+      consumes:
+      - "application/json"
+     
+      produces:
+      
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Enter Password and ConfirmPassword"
+        required: true
+        schema:
+          $ref: "#/definitions/update1_request"
+    
+      responses:
+        200:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/update1_response_200"
+        400:
+          description: "Bad Request" 
+        401:
+          description: "UNAUTHORIZED"  
+        404:
+          description: "Not Found"
+        500:
+          description: "Internal server error"      
+          
   /createpost :
     post:
       tags:
@@ -414,9 +448,103 @@ paths:
         404:
           description: "Not Found"
         500:
+          description: "Internal server error"   
+          
+  /alertstable :
+    post:
+      tags:
+      - "alerts"
+      summary: "User Details Verification"
+      description: "Get the User Details from the Database - The information contains all the User Email and Role with their First Name and Last Name"
+      consumes:
+      - "application/json"
+     
+      produces:
+      
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Enter all the fields"
+        required: true
+        schema:
+          $ref: "#/definitions/alerts_request"
+    
+      responses:
+        200:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/alerts_response_200"
+        400:
+          description: "Bad Request"
+        401:
+          description: "UNAUTHORIZED"  
+        404:
+          description: "Not Found"
+        500:
           description: "Internal server error"         
             
+  /getalerthome :
+    get:
+      tags:
+      - "get4"
+      summary: "get the data"
+      description: "get the details"
+      consumes:
+      - "application/json"
+     
+      produces:
+      
+      - "application/json"
+     
+    
+      responses:
+        200:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/getalerthome_response_200"
+        400:
+          description: "Bad Request" 
+        401:
+          description: "UNAUTHORIZED"  
+        404:
+          description: "Not Found"
+        500:
+          description: "Internal server error"     
           
+  /updatealert :
+    put:
+      tags:
+      - "update"
+      summary: "update  are not"
+      description: "update the alert details"
+      consumes:
+      - "application/json"
+     
+      produces:
+      
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Enter pid"
+        required: true
+        schema:
+          $ref: "#/definitions/updatealert_request"
+    
+      responses:
+        200:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/updatealert_response_200"
+        400:
+          description: "Bad Request" 
+        401:
+          description: "UNAUTHORIZED"  
+        404:
+          description: "Not Found"
+        500:
+          description: "Internal server error"             
   
 definitions:
 
@@ -444,7 +572,10 @@ definitions:
         example: "xxxxxxxxx" 
       Phoneno:
         type: "integer"
-        example: "9874561236"       
+        example: "9874561236" 
+      role:
+        type: "string"
+        example: "backend developer"
 
   Registration_response_200 :
     type: "object"
@@ -453,10 +584,29 @@ definitions:
       Status:
         type: "integer"
         example: "200"
-      
       Info:
         type: "string"
         example: "Successfully Registered"
+      FirstName:
+        type: "string"
+        example: "venkatesh"
+      LastName:
+        type: "string"
+        example: "manigandla"
+      Gender:
+        type: "boolean"
+        example: "Male"
+      UserName:
+        type: "object"
+        example: "Miracle"
+      Phoneno:
+        type: "integer"
+        example: "9874561236" 
+      role:
+        type: "string"
+        example: "backend developer"  
+      
+        
        
         
   login_request :
@@ -498,6 +648,12 @@ definitions:
       phoneno: 
         type: "string"
         example: 987967899
+      role:
+        type: "string"
+        example: "frontend developer"
+      ID:
+        type: "integer"
+        example: "5"
         
         
     
@@ -509,9 +665,25 @@ definitions:
       FirstName:
         type: "string"
         example: "adminuser"
-      Id:
+      LastName:
+        type: "string"
+        example: "mahi"
+      Gender:
+        type: "boolean"
+        example: "Male"
+      UserName:
+        type: "object"
+        example: "Miracle"
+      phoneno: 
+        type: "string"
+        example: 987967899
+      role:
+        type: "string"
+        example: "frontend developer"
+      ID:
         type: "integer"
-        example: "1"
+        example: "5"  
+        
        
     
   update_response_200 :
@@ -524,7 +696,30 @@ definitions:
       
       Info:
         type: "string"
-        example: "updated Successfully"    
+        example: "updated Successfully" 
+      FirstName:
+        type: "string"
+        example: "adminuser"
+      LastName:
+        type: "string"
+        example: "mahi"
+      Gender:
+        type: "boolean"
+        example: "Male"
+      UserName:
+        type: "object"
+        example: "Miracle"
+      phoneno: 
+        type: "string"
+        example: 987967899
+      role:
+        type: "string"
+        example: "frontend developer"
+      ID:
+        type: "integer"
+        example: "5"  
+          
+        
         
   fetch_request :
     type: "object"
@@ -592,6 +787,43 @@ definitions:
         type: "string"
         example: "fetch data Successfully"    
         
+  update1_request :
+    type: "object"
+   
+    properties:
+      Password:
+        type: "string"
+        example: "Miracle@12345"
+      ConfirmPassword:
+        type: "string"
+        example: "Miracle@12345"
+      
+      ID:
+        type: "integer"
+        example: "5"  
+        
+       
+    
+  update1_response_200 :
+    type: "object"
+   
+    properties:
+      Status:
+        type: "integer"
+        example: "200"
+      
+      Info:
+        type: "string"
+        example: "password updated Successfully" 
+      Password:
+        type: "string"
+        example: "Miracle@12345"
+      ConfirmPassword:
+        type: "string"
+        example: "Miracle@12345"
+      ID:
+        type: "integer"
+        example: "5"        
         
   createpost_request :
     type: "object"
@@ -609,6 +841,12 @@ definitions:
       postedOn:
         type: "string"
         example: "13-08-20"
+      status:  
+        type: "string"
+        example: 0
+      title:
+        type: "string"
+        example: "My Opinion"
       ID:
         type: "integer"
         example: "5"
@@ -625,6 +863,28 @@ definitions:
       Info:
         type: "string"
         example: "posted data successfully"  
+      
+      userName:
+        type: "string"
+        example: "venkatesh"
+      role:
+        type: "string"
+        example: "backend developer"
+      post:
+        type: "string"
+        example: "Nice to work with organization"
+      postedOn:
+        type: "string"
+        example: "13-08-20"
+      status:  
+        type: "string"
+        example: 0
+      title:
+        type: "string"
+        example: "My Opinion"
+      ID:
+        type: "integer"
+        example: "5"  
         
         
   mypost_request :
@@ -647,7 +907,30 @@ definitions:
       
       Info:
         type: "string"
-        example: "get post data"        
+        example: "get post data successfully"
+      userName:
+        type: "string"
+        example: "venkatesh"
+      role:
+        type: "string"
+        example: "backend developer"
+      post:
+        type: "string"
+        example: "Nice to work with organization"
+      postedOn:
+        type: "string"
+        example: "13-08-20"
+      status:  
+        type: "string"
+        example: 0
+      title:
+        type: "string"
+        example: "My Opinion"
+      ID:
+        type: "integer"
+        example: "5"  
+        
+        
         
   
  
@@ -663,14 +946,35 @@ definitions:
       
       Info:
         type: "string"
-        example: "get post data"  
+        example: "get post data" 
+      userName:
+        type: "string"
+        example: "venkatesh"
+      role:
+        type: "string"
+        example: "backend developer"
+      post:
+        type: "string"
+        example: "Nice to work with organization"
+      postedOn:
+        type: "string"
+        example: "13-08-20"
+      status:  
+        type: "string"
+        example: 0
+      title:
+        type: "string"
+        example: "My Opinion"
+      ID:
+        type: "integer"
+        example: "5"  
    
   updateapprovestatus_request :
     type: "object"
    
     properties:
      
-      Id:
+      pid:
         type: "integer"
         example: "1"
        
@@ -686,13 +990,34 @@ definitions:
       Info:
         type: "string"
         example: "updated Successfully" 
+      userName:
+        type: "string"
+        example: "venkatesh"
+      role:
+        type: "string"
+        example: "backend developer"
+      post:
+        type: "string"
+        example: "Nice to work with organization"
+      postedOn:
+        type: "string"
+        example: "13-08-20"
+      status:  
+        type: "string"
+        example: 1
+      title:
+        type: "string"
+        example: "My Opinion"
+      ID:
+        type: "integer"
+        example: "5"  
         
   updaterejectstatus_request :
     type: "object"
    
     properties:
      
-      Id:
+      pid:
         type: "integer"
         example: "1"
        
@@ -707,7 +1032,28 @@ definitions:
       
       Info:
         type: "string"
-        example: "updated Successfully"       
+        example: "updated Successfully"  
+      userName:
+        type: "string"
+        example: "venkatesh"
+      role:
+        type: "string"
+        example: "backend developer"
+      post:
+        type: "string"
+        example: "Nice to work with organization"
+      postedOn:
+        type: "string"
+        example: "13-08-20"
+      status:  
+        type: "string"
+        example: 2
+      title:
+        type: "string"
+        example: "My Opinion"
+      ID:
+        type: "integer"
+        example: "20"  
 
 
   getadminhome_response_200 :
@@ -720,6 +1066,125 @@ definitions:
       
       Info:
         type: "string"
-        example: "get admin data"  
+        example: "get admin data successfully"
+      userName:
+        type: "string"
+        example: "venkatesh"
+      role:
+        type: "string"
+        example: "backend developer"
+      post:
+        type: "string"
+        example: "Nice to work with organization"
+      postedOn:
+        type: "string"
+        example: "13-08-20"
+      status:  
+        type: "string"
+        example: 0
+      title:
+        type: "string"
+        example: "My Opinion"
+      ID:
+        type: "integer"
+        example: "5"  
+        
+      
+  alerts_request :
+    type: "object"
+   
+    properties:
+      sno:
+        type: "integer"
+        example: "1"
+      name:
+        type: "string"
+        example: "Employee details"
+      link:
+        type: "string"
+        example: "https://mapi.miraclesoft.com/mail#1"
+      createdOn:
+        type: "string"
+        example: "13-09-2020"
+      statusAction:
+        type: "string"
+        example: "1"
+      
+  alerts_response_200 :
+    type: "object"
+   
+    properties:
+      Status:
+        type: "integer"
+        example: "200"
+      Info:
+        type: "string"
+        example: "Posted alert data successfully"
+        
+   
        
+    
+  getalerthome_response_200 :
+    type: "object"
+   
+    properties:
+      Status:
+        type: "integer"
+        example: "200"
+      
+      Info:
+        type: "string"
+        example: "fetch data Successfully"  
+        
+  updatealert_request :
+    type: "object"
+   
+    properties:
+      sno:
+        type: "integer"
+        example: "1"
+      name:
+        type: "string"
+        example: "Employee Details"
+      link:
+        type: "string"
+        example: "https://mapi.miraclesoft.com/mail#1"
+      createdOn:
+        type: "string"
+        example: "2020-10-23 15:19:05.820000"
+      statusAction: 
+        type: "integer"
+        example: 1
+     
+        
+       
+    
+  updatealert_response_200 :
+    type: "object"
+   
+    properties:
+      Status:
+        type: "integer"
+        example: "200"
+      
+      Info:
+        type: "string"
+        example: "updated alert data Successfully" 
+      sno:
+        type: "integer"
+        example: "1"
+      name:
+        type: "string"
+        example: "Employee Details"
+      link:
+        type: "string"
+        example: "https://mapi.miraclesoft.com/mail#1"
+      createdOn:
+        type: "string"
+        example: "2020-10-23 15:19:05.820000"
+      statusAction: 
+        type: "integer"
+        example: 1       
+              
+          
        
